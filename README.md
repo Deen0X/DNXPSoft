@@ -115,6 +115,57 @@ On Windows Explorer, there are two entries for processing DNXItem files.
 The "Process DNXItem" option, will process the selected ".DNXItem" file, adding the entry on Windows Start Menu
 The "Process all DNXItems on this directory" will process all the DNXIte files contained on the current directory, and subdirectories.
 
+# Run subscripts for initialize aplications
+
+If the main Script found a file .DNXItem.cmd, will launch it as standard cmd file.
+This may be interesting for setup some things that requires the program to run.
+
+Example. I have a small script for windirstat that adds contextual entries for folders and drives on Windows Explorer, to launch directly the program on these selections.
+
+![image](https://user-images.githubusercontent.com/3720302/137140769-a0c48091-581c-4036-83dd-2526631cc23d.png)
+
+The program process the _windirstat.exe.DNXItem.
+
+The "S" on the progress bar indicates that there is a Subscript associated and was called.
+
+![image](https://user-images.githubusercontent.com/3720302/137139675-c618135d-1a42-4e06-9088-cc4dc1687e94.png)
+
+The subscript _windirstat.exe.DNXItem.cmd launched.
+
+![image](https://user-images.githubusercontent.com/3720302/137140506-2972e733-c71e-4d04-9ba1-bc08fa14dd2d.png)
+
+This is the content of the subscript
+
+______________________________________________________________________________
+@echo off
+cls
+echo Config WinDirStat right click contextual menu in explorer
+echo Will appear on Folders and Drives
+
+@setlocal enableextensions
+@cd /d "%~dp0"
+set "myF=%cd%\windirstat.exe"
+set a=%%%
+set a=%a%1
+set myD=%~d0
+set myD=%myD:~0,1%
+echo myD=%myD%
+rem The title will include the Drive letter where is currently the WinDirStat program.
+reg ADD "HKEY_CLASSES_ROOT\Directory\shell\windirstat" /t REG_SZ /d "WinDirStat Here [%myD%]" /f
+reg ADD "HKEY_CLASSES_ROOT\Directory\shell\windirstat" /v Icon /t REG_SZ /d "%myF%" /f
+reg ADD "HKEY_CLASSES_ROOT\Directory\shell\windirstat\command" /t REG_SZ /d "%myF% ""%a%""" /f
+reg ADD "HKEY_CLASSES_ROOT\Drive\shell\windirstat" /t REG_SZ /d "WinDirStat Here [%myD%]" /f
+reg ADD "HKEY_CLASSES_ROOT\Drive\shell\windirstat" /v Icon /t REG_SZ /d "%myF%" /f
+reg ADD "HKEY_CLASSES_ROOT\Drive\shell\windirstat\command" /t REG_SZ /d "%myF% ""%a%""" /f
+timeout %GlobalTimeoutActionShort%
+______________________________________________________________________________
+
+Note: there are two global variables defined on main Script
+__GlobalTimeoutActionShort__ with default value is 2
+__GlobalTimeoutAction__ with default value is 5
+
+These variables may be used to show some info on screen, with some delay before continue.
+I prefer to use the command "timeout" instead of "pause", because "pause" need an interact with user to continue.
 
 # Reports
 
@@ -168,6 +219,7 @@ If cannot be downloaded (example, if you're runnning from read only directory), 
 
 When you run the first time the script, with default options on it (you can open the script and check the :InitScript section for more info), the script will:
 - Generate a new Windows Menu entry called "_DNXScript", with some options on it to adds or remove contextual entries on Windows Explorer.
+- Run subscript related to .DNXItem that can custom the setup of the portable aplication (creating folders, adding some registry entries, etc)
 - Register file extension .DNXItem
 - Assign an Icon to .DNXItem extension
 - Add entry on Windows Explorer Contextual Menu: "Generate DNXItem for selected file"
@@ -176,6 +228,27 @@ When you run the first time the script, with default options on it (you can open
 - Generate General Report
 - Generate Detailed Report
 - Generate Subscript to quick add items to Windows Start Menu
+
+
+# Q&A
+
+- Q:Why i did not use common portable apps suites i can found on internet?
+- A:I used for long time some of these solutions (PortableApps.com, ThinInstall, VMWare Virtual Apps, etc), but most of these solutions have some problems when running.
+Most of these Virtualized apps, requires to generate virtual environment and sometimes get troubles interact with other native apps on windows, or cannot be updated because they are running on compressed packages that cannot be changed, or simply use a lot more resources to run than the app itself.
+Some portable apps i downloaded, i found virus/malwares that only are discover when the app is running (when the cointained files are uncompress/unpack)
+Many portable apps are false positive on virus suites. The problem is when youre running these programs on controlled environments where any of these false positive are warning to admin, and this is not a desidered scenario to run.
+
+For these reasons i prefer to avoid the use of portable apps found on the web.
+
+- Q:How i can create my own "portable" apps?
+- A: you can use two computers, one of them you can install a program, then copy the installed folder and run on the another PC. If run without problems, then you have a portable apps. if not, then delete.
+Another way can be using a Windows Sandbox environment. This feature only can be activated on Windows 10 Pro or above. install the application on the Sandbox, then copy the installed app to the real machine and test.
+Another way may be, if you only have a single computer, then install some program using installer, then copy the installed Folder to some place, then uninstall the application. Ainally, test the application you copied the folder (after uninstalled it). if run, then is portable.
+
+- Q: When i install a program, this requires a serial key, or account. this info is saved on the "portable" application?
+- A: usually this info is not on the installed folder. Maybe on the windows registry, etc. The process of adding the entry of the program to windows start menu, is similar to install the application, this means, you must provide the serial or account when the program ask (when you run it)
+
+
 
 
 Hope you found useful this script
