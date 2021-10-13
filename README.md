@@ -102,6 +102,14 @@ The entry simply runs the script, and give the file selected as parameter, and r
 
 The standard way is to run directly the script from the BASE folder. This will scann all subfolders looking for .DNXItem files and process them.
 
+![image](https://user-images.githubusercontent.com/3720302/137141925-856c9bc1-6a6f-480a-b284-f2f86311c756.png)
+
+Running the Main script from BASE folder
+
+![image](https://user-images.githubusercontent.com/3720302/137142977-084f6f6e-9c34-4c29-9d81-6e906109ef00.png)
+
+Main Script finished.
+
 The direct way is starting the script, passing a .DNXItem file as parameter (with full path). This way, the script open it, and process adding to the corresponding category on Windows Start Menu.
 
 There is another way, is passing a folder as parameter to the Script. This will scan the indicated folder, looking for ".DNXItem" files on it and subfolders and process them.
@@ -135,30 +143,6 @@ The subscript _windirstat.exe.DNXItem.cmd launched.
 ![image](https://user-images.githubusercontent.com/3720302/137140506-2972e733-c71e-4d04-9ba1-bc08fa14dd2d.png)
 
 This is the content of the subscript
-
-______________________________________________________________________________
-@echo off
-cls
-echo Config WinDirStat right click contextual menu in explorer
-echo Will appear on Folders and Drives
-
-@setlocal enableextensions
-@cd /d "%~dp0"
-set "myF=%cd%\windirstat.exe"
-set a=%%%
-set a=%a%1
-set myD=%~d0
-set myD=%myD:~0,1%
-echo myD=%myD%
-rem The title will include the Drive letter where is currently the WinDirStat program.
-reg ADD "HKEY_CLASSES_ROOT\Directory\shell\windirstat" /t REG_SZ /d "WinDirStat Here [%myD%]" /f
-reg ADD "HKEY_CLASSES_ROOT\Directory\shell\windirstat" /v Icon /t REG_SZ /d "%myF%" /f
-reg ADD "HKEY_CLASSES_ROOT\Directory\shell\windirstat\command" /t REG_SZ /d "%myF% ""%a%""" /f
-reg ADD "HKEY_CLASSES_ROOT\Drive\shell\windirstat" /t REG_SZ /d "WinDirStat Here [%myD%]" /f
-reg ADD "HKEY_CLASSES_ROOT\Drive\shell\windirstat" /v Icon /t REG_SZ /d "%myF%" /f
-reg ADD "HKEY_CLASSES_ROOT\Drive\shell\windirstat\command" /t REG_SZ /d "%myF% ""%a%""" /f
-timeout %GlobalTimeoutActionShort%
-______________________________________________________________________________
 
 Note: there are two global variables defined on main Script
 __GlobalTimeoutActionShort__ with default value is 2
