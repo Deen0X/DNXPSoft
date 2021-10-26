@@ -1,4 +1,5 @@
-# DNXPSoft
+# DNXPSoft ![image](https://user-images.githubusercontent.com/3720302/138971638-0f610a3b-32b2-4837-9af4-b31a81732efd.png)
+
 Script for adding items to start menu, from portabilized applications
 
 # Overview:
